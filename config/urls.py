@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView, CreateView, ListView, UpdateView, DeleteView, DetailView, View, TemplateView
 from django.urls import include
+from mainapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='mainapp/')),
-    path ('mainapp/', include('mainapp.urls')),
+    path ('mainapp/', include('mainapp.urls', namespace='mainapp')),
+
 ]
