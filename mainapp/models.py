@@ -2,7 +2,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
+
 NULLABLE = {'blank': True, 'null': True}
+
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
@@ -18,7 +20,9 @@ class BaseModel(models.Model):
         self.deleted = True
         self.save()
 
+
 class NewsManager(models.Manager):
+
     def delete(self):
         pass
 
@@ -27,10 +31,10 @@ class NewsManager(models.Manager):
 
 
 class News(BaseModel):
-    #objects = NewsManager()
+    # objects = NewsManager()
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
-    preamble = models.CharField(max_length=1000, verbose_name='Вступление')
+    intro = models.CharField(max_length=1000, verbose_name='Вступление')
     body = models.TextField(verbose_name='Содержимое')
     body_as_markdown = models.BooleanField(default=False, verbose_name='Способ разметки')
 
@@ -49,19 +53,20 @@ class Course(BaseModel):
     cost = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Cost", default=0)
     cover = models.CharField(max_length=25, default="no_image.svg", verbose_name="Cover")
 
-    def __str__(self):
-        return f'#{self.pk} {self.name}'
+    def __str__(self) -> str:
+        return f"{self.pk} {self.name}"
 
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
+
 
 class Lesson(BaseModel):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     num = models.PositiveIntegerField(verbose_name="Lesson number")
     title = models.CharField(max_length=256, verbose_name="Name")
     description = models.TextField(verbose_name="Description", **NULLABLE)
-    description_as_markdown = models.BooleanField( verbose_name="As markdown", default=False)
+    description_as_markdown = models.BooleanField(verbose_name="As markdown", default=False)
 
     def __str__(self) -> str:
         return f"{self.course.name} | {self.num} | {self.title}"
@@ -69,9 +74,10 @@ class Lesson(BaseModel):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
-        ordering = ("course", "num")
+        ordering = ("course", "num",)
 
-class CourseTeacher(BaseModel):
+
+class CoursesTeacher(BaseModel):
     courses = models.ManyToManyField(Course)
     name_first = models.CharField(max_length=128, verbose_name="Name")
     name_second = models.CharField(max_length=128, verbose_name="Surname")
@@ -82,10 +88,9 @@ class CourseTeacher(BaseModel):
 
 
 class CourseFeedback(BaseModel):
-    RATING_FIVE = 5
 
     RATINGS = (
-        (RATING_FIVE, '⭐⭐⭐⭐⭐'),
+        (5, '⭐⭐⭐⭐⭐'),
         (4, '⭐⭐⭐⭐'),
         (3, '⭐⭐⭐'),
         (2, '⭐⭐'),
@@ -95,7 +100,7 @@ class CourseFeedback(BaseModel):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Пользователь')
     rating = models.SmallIntegerField(choices=RATINGS, default=5, verbose_name='Рейтинг')
-    feedback = models.TextField(verbose_name='отзыв', default='Без отзыва')
+    feedback = models.TextField(verbose_name='Отзыв', default='Без отзыва')
 
     class Meta:
         verbose_name = ''
