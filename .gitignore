@@ -6,3 +6,5 @@ env/pyvenv.cfg
 *.pyc
 log
 emails-tmp
+.DS_Store
+.env
